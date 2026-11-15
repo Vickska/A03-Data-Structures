@@ -29,14 +29,21 @@ typedef struct hashTable {
 //Function Prototypes
 nameNode* initializeName(char* name);
 struct nameNode* insertSorted(struct nameNode* head, char* name);
+hashTable* initializeHashTable();
 
 int main(void) {
+
+	//initializing the master list and hash table
+	nameNode* masterList = NULL;
+	hashTable* nameHashTable = initializeHashTable();
+
+
 
 	return 0;
 }
 
 
-// METHOD : initializeName()
+// FUNCTION : initializeName()
 // DESCRIPTION: 
 //      This function initializes a new node to store a name
 // PARAMETERS:
@@ -50,7 +57,7 @@ nameNode* initializeName(char* name) {
 
 	// if there is no memory, null is returned
 	if (node == NULL) {
-		printf("Memory allocation failed");
+		printf("Memory allocation failed.\n");
 		return NULL;
 	}
 
@@ -70,7 +77,36 @@ nameNode* initializeName(char* name) {
 	return node;
 }
 
-// METHOD : insertSorted()
+
+// FUNCTION : initializeHashTable()
+// DESCRIPTION: 
+//      This function initializes the hash table and all its buckets
+// PARAMETERS:
+//		None.
+// RETURNS:
+//		hashTable* nameHashTable: the initialized hash table
+hashTable* initializeHashTable() {
+	
+	//allocating memory for the hash table
+	hashTable* nameHashTable = (hashTable*)malloc(sizeof(hashTable));
+
+	// if memory allocation fails, an error is shown
+	if (nameHashTable == NULL) {
+		printf("Memory allocation failed.\n");
+		exit(1);
+	}
+
+	// going through each bucket in the hash table and setting its head to NULL
+	for (int i = 0; i < SIZE; i++) {
+		nameHashTable->Table[i] = NULL;
+	}
+
+	// returning the hash table
+	return nameHashTable;
+}
+
+
+// FUNCTION : insertSorted()
 // DESCRIPTION: 
 //      This function inserts a new nameNode into a list in its correct alphabetical position
 // PARAMETERS:
@@ -107,4 +143,3 @@ struct nameNode* insertSorted(struct nameNode* head, char* name) {
 	//returning the head of the list
 	return head;
 }
-
