@@ -30,12 +30,17 @@ typedef struct hashTable {
 nameNode* initializeName(char* name);
 struct nameNode* insertSorted(struct nameNode* head, char* name);
 hashTable* initializeHashTable();
+int hash(char* name);
+void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTable);
 
 int main(void) {
 
 	//initializing the master list and hash table
 	nameNode* masterList = NULL;
 	hashTable* nameHashTable = initializeHashTable();
+
+	//loading the names from the names.txt file
+	loadNames("./names.txt", masterList, nameHashTable);
 
 
 
@@ -77,7 +82,6 @@ nameNode* initializeName(char* name) {
 	return node;
 }
 
-
 // FUNCTION : initializeHashTable()
 // DESCRIPTION: 
 //      This function initializes the hash table and all its buckets
@@ -104,7 +108,6 @@ hashTable* initializeHashTable() {
 	// returning the hash table
 	return nameHashTable;
 }
-
 
 // FUNCTION : insertSorted()
 // DESCRIPTION: 
@@ -142,4 +145,67 @@ struct nameNode* insertSorted(struct nameNode* head, char* name) {
 
 	//returning the head of the list
 	return head;
+}
+
+// FUNCTION : hash()
+// DESCRIPTION: 
+//      This function hashes a name and gets its bucket number
+// PARAMETERS:
+//		char* name: the name being inserted into the hash table
+// RETURNS:
+//		int hashNum: the bucket number of the name
+int hash(char* name) {
+
+	int hashNum;
+
+	// getting the sum of all characters in the name
+	for (int i = 0; i < name[i] != '\0'; i++) {
+		hashNum = hashNum + name[i];
+	}
+
+	// getting the remainder of the sum divided by the bucket size
+	hashNum = hashNum % SIZE;
+
+	// returning the bucket number
+	return hashNum;
+
+}
+
+// FUNCTION : loadNames()
+// DESCRIPTION: 
+//      This function loads the names from a file and sorts them into the master list and the name hash table
+// PARAMETERS:
+//		char* filename: the filename containing the names
+//		struct nameNode** list: pointer to the head of the master list
+//		struct hashTable* nHashTable: the name hash table
+// RETURNS:
+//		None.
+void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTable) {
+
+	//Opening the name file to read from
+	FILE* file = fopen(filename, "r");
+
+	if (file == NULL) {
+		printf("Error opening file");
+		exit(1);
+	}
+
+	//creating a buffer to only receive 30 characters max
+	char buffer[31];
+	while (fgets(buffer, sizeof(buffer), file)) {
+
+		// removing the new line character from the end of the read line
+		buffer[strcspn(buffer, "\n")] = '\0';
+
+		//inserting in the master list
+		 *list = insertSorted(*list, buffer);
+
+		//inserting into the hash tables
+		int bucket = hash(buffer);
+		nHashTable->Table[bucket] = insertSorted(nHashTable->Table[bucket], buffer);
+
+	}
+	//closing the file once all names are read
+	fclose(file);
+
 }
