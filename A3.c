@@ -28,6 +28,7 @@ typedef struct hashTable {
 
 //Function Prototypes
 nameNode* initializeName(char* name);
+struct nameNode* insertSorted(struct nameNode* head, char* name);
 
 int main(void) {
 
@@ -41,6 +42,7 @@ int main(void) {
 // PARAMETERS:
 //	   char* name: the name being added to a node
 // RETURNS:
+//		nameNode* node: the new node containing the name
 nameNode* initializeName(char* name) {
 
 	//allocating memory for the nameNode
@@ -66,5 +68,43 @@ nameNode* initializeName(char* name) {
 	node->next = NULL;
 
 	return node;
+}
+
+// METHOD : insertSorted()
+// DESCRIPTION: 
+//      This function inserts a new nameNode into a list in its correct alphabetical position
+// PARAMETERS:
+//	   char* name: the name being added
+// RETURNS:
+//		nameNode* head: the head of the list being inserted to
+struct nameNode* insertSorted(struct nameNode* head, char* name) {
+
+	//creating a node to store new names
+	nameNode* newName = initializeName(name);
+
+	//inserting at the beginning of the list
+	if (head == NULL || (strcmp(newName->name, head->name) < 0)) {
+		newName->next = head;
+		head = newName;
+
+	}
+	//inserting in the middle/end of the list
+	else {
+		struct nameNode* current = head;
+		struct nameNode* previous = NULL;
+
+		// traversing the list while the current name is still alphabetically less than the new name
+		while (current != NULL && strcmp(current->name, newName->name) < 0) {
+			previous = current;
+			current = current->next;
+		}
+
+		//updating the list once a spot has been found
+		previous->next = newName;
+		newName->next = current;
+	}
+
+	//returning the head of the list
+	return head;
 }
 
