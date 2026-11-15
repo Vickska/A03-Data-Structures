@@ -32,6 +32,8 @@ struct nameNode* insertSorted(struct nameNode* head, char* name);
 hashTable* initializeHashTable();
 int hash(char* name);
 void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTable);
+struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList, int* comparisonCount);
+
 
 int main(void) {
 
@@ -41,6 +43,20 @@ int main(void) {
 
 	//loading the names from the names.txt file
 	loadNames("./names.txt", &masterList, nameHashTable);
+
+	//creating variable to keep tracking of comparisons made
+	int* comparisonCount = 0;
+
+	// creating searchName variable to store user-entered name, and searchNode to store found name
+	char searchName[30];
+	nameNode* searchNode = NULL;
+
+	printf("Enter a name to be searched for: ");
+	fgets(searchName, sizeof(searchName), stdin);
+
+	searchNode = searchLinkedList(searchName, masterList, &comparisonCount);
+	printf("%d comparisons made...", comparisonCount);
+	printf("\n");
 
 	return 0;
 }
@@ -206,4 +222,53 @@ void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTa
 	//closing the file once all names are read
 	fclose(file);
 
+}
+
+
+// FUNCTION : searchLinkedList()
+// DESCRIPTION: 
+//      This function searches the sorted linked list for a name and 
+//		returns a pointer to the node containing the name if found, or null if not.
+// PARAMETERS:
+//		char* searchName: the name being searched for
+//		struct nameNode* linkedList: the master list being searched
+//		int* comparison count: pointer to the int containing number of strcmp comparisons done
+// RETURNS:
+//		int hashNum: the bucket number of the name
+struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList, int* comparisonCount) {
+
+	//storing the head of the linked list in a variable
+	nameNode* current = linkedList;
+
+	// creating a node to store the name if found
+	nameNode* foundNode = NULL;
+
+	//setting the comparison count to zero
+	*comparisonCount = 0;
+
+	// traversing through the list until the name is found
+	while (current != NULL) {
+
+		// incrementing the comparison count
+		(*comparisonCount)++;
+
+		//comparing the names
+		int result = strcmp(current->name, searchName);
+
+		// if the result is 0, the name has been found
+		if (result == 0) {
+			foundNode = current;
+			return foundNode;
+		}
+
+		//since the list is sorted, if the result is a number greater than zero,
+		// the current name has surpassed where the searchName would've been in the list
+		// so the name hasn't been found
+		if (result > 0) {
+
+			return foundNode;
+		}
+		
+		current = current->next;
+	}
 }
