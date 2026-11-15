@@ -11,8 +11,24 @@ DESCRIPTION:  This program compares the efficiency of searching a sorted linked 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+// defining the constant bucket size
+#define SIZE 127
+
+//defining structs
+typedef struct nameNode {
+	char* name;
+	struct nameNode* nextName;
+} nameNode;
+
+typedef struct hashTable {
+	nameNode* Table[127]
+}hashTable;
+
 
 int main(void) {
 
 	return 0;
 }
+
