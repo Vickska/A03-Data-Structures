@@ -23,7 +23,7 @@ typedef struct nameNode {
 } nameNode;
 
 typedef struct hashTable {
-	nameNode* Table[SIZE]
+	nameNode* Table[SIZE];
 }hashTable;
 
 //Function Prototypes
@@ -40,9 +40,7 @@ int main(void) {
 	hashTable* nameHashTable = initializeHashTable();
 
 	//loading the names from the names.txt file
-	loadNames("./names.txt", masterList, nameHashTable);
-
-
+	loadNames("./names.txt", &masterList, nameHashTable);
 
 	return 0;
 }
@@ -132,8 +130,8 @@ struct nameNode* insertSorted(struct nameNode* head, char* name) {
 		struct nameNode* current = head;
 		struct nameNode* previous = NULL;
 
-		// traversing the list while the current name is still alphabetically less than the new name
-		while (current != NULL && strcmp(current->name, newName->name) < 0) {
+		// traversing the list while the current name is still alphabetically less than or equal to the new name
+		while (current != NULL && strcmp(current->name, newName->name) <= 0) {
 			previous = current;
 			current = current->next;
 		}
@@ -156,7 +154,7 @@ struct nameNode* insertSorted(struct nameNode* head, char* name) {
 //		int hashNum: the bucket number of the name
 int hash(char* name) {
 
-	int hashNum;
+	int hashNum = 0;
 
 	// getting the sum of all characters in the name
 	for (int i = 0; i < name[i] != '\0'; i++) {
