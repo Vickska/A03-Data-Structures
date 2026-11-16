@@ -5,8 +5,9 @@ PROGRAMMER    : Vicky Nyangoma Kamanyire
 FIRST VERSION : 2026 - 11 - 15
 DESCRIPTION:  This program compares the efficiency of searching a sorted linked list and a hash table
 
-			  Link to Github repository:
+			  Link to Github repository: https://github.com/Vickska/A03-Data-Structures.git
 */
+
 #pragma warning (disable: 4996)
 
 #include <stdio.h>
@@ -54,8 +55,7 @@ int main(void) {
 
 
 	// creating searchName variable to store user-entered name, and searchNode to store found name
-	char searchName[30];
-	nameNode* searchNode = NULL;
+	char searchName[31];
 
 	int running = 1;
 	while (running == 1) {
@@ -209,7 +209,7 @@ int hash(char* name) {
 	int hashNum = 0;
 
 	// getting the sum of all characters in the name
-	for (int i = 0; i < name[i] != '\0'; i++) {
+	for (int i = 0; name[i] != '\0'; i++) {
 		hashNum = hashNum + name[i];
 	}
 
