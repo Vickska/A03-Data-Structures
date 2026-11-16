@@ -33,7 +33,9 @@ hashTable* initializeHashTable();
 int hash(char* name);
 void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTable);
 struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList, int* comparisonCount);
-void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* comparisonCount[2], struct nameNode* linkedList);
+void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int comparisonCount[2], struct nameNode* linkedList);
+void freeList(struct nameNode* head);
+void freeAllMemory(struct nameNode* linkedList, struct hashTable* nHashTable);
 
 int main(void) {
 
@@ -86,7 +88,7 @@ int main(void) {
 	printf("Total number of linked list comparisons: %d\n", totalLLComparisons);
 	printf("Total number of hash table comparisons: %d\n", totalHTComparisons);
 
-
+	freeAllMemory(masterList, nameHashTable);
 
 
 	return 0;
@@ -127,6 +129,7 @@ nameNode* initializeName(char* name) {
 	return node;
 }
 
+
 // FUNCTION : initializeHashTable()
 // DESCRIPTION: 
 //      This function initializes the hash table and all its buckets
@@ -153,6 +156,7 @@ hashTable* initializeHashTable() {
 	// returning the hash table
 	return nameHashTable;
 }
+
 
 // FUNCTION : insertSorted()
 // DESCRIPTION: 
@@ -191,6 +195,7 @@ struct nameNode* insertSorted(struct nameNode* head, char* name) {
 	//returning the head of the list
 	return head;
 }
+
 
 // FUNCTION : hash()
 // DESCRIPTION: 
@@ -306,6 +311,7 @@ struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList,
 	return NULL;
 }
 
+
 // FUNCTION : searchForNameTwice()
 // DESCRIPTION: 
 //      This function searches the name hash table for a name twice 
@@ -350,3 +356,59 @@ void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int comp
 	}
 	
 }
+
+
+// FUNCTION : freeList()
+// DESCRIPTION: 
+//      This function frees every node of the linked lists
+// PARAMETERS:
+ //		struct nameNode* head: the head of the list being freed
+// RETURNS:
+//		None.
+void freeList(struct nameNode* head) {
+
+	// storing the head of the linked list
+	nameNode* current = head;
+
+	//traversing through the linked list to free every node
+	while (current != NULL) {
+		nameNode* temp = current;
+		current = current->next;
+
+		//freeing the name and the current node
+		free(temp->name);
+		free(temp);
+
+	}
+}
+
+
+// FUNCTION : freeAllMemory()
+// DESCRIPTION: 
+//      This function frees all allocated memory in the program
+// PARAMETERS:
+ //		struct nameNode* linkedList: the head of the linked list
+ //		struct hashTable* nHashTable: the hash table used in the program
+// RETURNS:
+//		None.
+void freeAllMemory(struct nameNode* linkedList, struct hashTable* nHashTable) {
+
+	// Linked list free
+	freeList(linkedList);
+
+	// Hash table free
+	// traversing through all hash table buckets to free every node in each list
+	for (int i = 0; i < SIZE; i++) {
+		if (nHashTable->Table[i] != NULL) {
+
+			//freeing the linked list in the bucket
+			freeList(nHashTable->Table[i]);
+		}
+	}
+
+	// freeing the entire hash table
+	free(nHashTable);
+
+}
+
+
