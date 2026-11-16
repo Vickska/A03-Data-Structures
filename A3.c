@@ -44,22 +44,50 @@ int main(void) {
 	//loading the names from the names.txt file
 	loadNames("./names.txt", &masterList, nameHashTable);
 
-	//creating variable to keep track of comparisons made
-	int* comparisonCount[2] = {0};
+	//creating variablea to keep track of comparisons and searches made
+	int comparisonCount[2] = {0};
+	int totalSearches = 0;
+	int totalLLComparisons = 0;
+	int totalHTComparisons = 0;
+
 
 	// creating searchName variable to store user-entered name, and searchNode to store found name
 	char searchName[30];
 	nameNode* searchNode = NULL;
 
-	//Asking the user for a search name
-	printf("Enter a name to be searched for: ");
-	fgets(searchName, sizeof(searchName), stdin);
+	int running = 1;
+	while (running == 1) {
 
-	// removing the newline character
-	searchName[strcspn(searchName, "\n")] = '\0';
+		//Asking the user for a search name
+		printf("Enter a name to be searched for: ");
+		fgets(searchName, sizeof(searchName), stdin);
 
-	//Searching both the linked list and hash table
-	searchForNameTwice(searchName, nameHashTable->Table, &comparisonCount, masterList);
+		// removing the newline character
+		searchName[strcspn(searchName, "\n")] = '\0';
+
+		if (strcmp(searchName, "quit") == 0) {
+			break;
+		}
+
+		//Searching both the linked list and hash table
+		searchForNameTwice(searchName, nameHashTable->Table, comparisonCount, masterList);
+
+		//incrementing the total comparisons and searches
+		totalSearches++;
+		totalLLComparisons += comparisonCount[0];
+		totalHTComparisons += comparisonCount[1];
+		printf("\n");
+	}
+
+	printf("\n\n\n");
+
+	//printing the final statistics
+	printf("Total number of searches: %d\n", totalSearches);
+	printf("Total number of linked list comparisons: %d\n", totalLLComparisons);
+	printf("Total number of hash table comparisons: %d\n", totalHTComparisons);
+
+
+
 
 	return 0;
 }
@@ -290,7 +318,7 @@ struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList,
  //		struct nameNode* linkedList: the master list being searched
 // RETURNS:
 //		None.
-void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* comparisonCount[2], struct nameNode* linkedList) {
+void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int comparisonCount[2], struct nameNode* linkedList) {
 
 	//setting comparison counts to 0
 	comparisonCount[0] = 0;
@@ -301,10 +329,10 @@ void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* com
 
 	//printing the results
 	if (foundNode != NULL) {
-		printf("\t %s was found in the linked List in %d comparisons\n", searchName, comparisonCount[0]);
+		printf("\t%s was found in the linked list in %d comparisons\n", searchName, comparisonCount[0]);
 	}
 	else {
-		printf("\t %s was NOT found in the linked List in %d comparisons\n", searchName, comparisonCount[0]);
+		printf("\t%s was NOT found in the linked list in %d comparisons\n", searchName, comparisonCount[0]);
 	}
 
 	//getting the hash bucket for the name
@@ -315,10 +343,10 @@ void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* com
 
 	//printing the results
 	if (foundNode != NULL) {
-		printf("\t %s was found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
+		printf("\t%s was found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
 	}
 	else {
-		printf("\t %s was NOT found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
+		printf("\t%s was NOT found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
 	}
 	
 }
