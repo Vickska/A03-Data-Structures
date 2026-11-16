@@ -33,7 +33,7 @@ hashTable* initializeHashTable();
 int hash(char* name);
 void loadNames(char* filename, struct nameNode** list, struct hashTable* nHashTable);
 struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList, int* comparisonCount);
-
+void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* comparisonCount[2], struct nameNode* linkedList);
 
 int main(void) {
 
@@ -44,19 +44,22 @@ int main(void) {
 	//loading the names from the names.txt file
 	loadNames("./names.txt", &masterList, nameHashTable);
 
-	//creating variable to keep tracking of comparisons made
-	int* comparisonCount = 0;
+	//creating variable to keep track of comparisons made
+	int* comparisonCount[2] = {0};
 
 	// creating searchName variable to store user-entered name, and searchNode to store found name
 	char searchName[30];
 	nameNode* searchNode = NULL;
 
+	//Asking the user for a search name
 	printf("Enter a name to be searched for: ");
 	fgets(searchName, sizeof(searchName), stdin);
 
-	searchNode = searchLinkedList(searchName, masterList, &comparisonCount);
-	printf("%d comparisons made...", comparisonCount);
-	printf("\n");
+	// removing the newline character
+	searchName[strcspn(searchName, "\n")] = '\0';
+
+	//Searching both the linked list and hash table
+	searchForNameTwice(searchName, nameHashTable->Table, &comparisonCount, masterList);
 
 	return 0;
 }
@@ -271,4 +274,51 @@ struct nameNode* searchLinkedList(char* searchName, struct nameNode* linkedList,
 		
 		current = current->next;
 	}
+
+	return NULL;
+}
+
+// FUNCTION : searchForNameTwice()
+// DESCRIPTION: 
+//      This function searches the name hash table for a name twice 
+// PARAMETERS:
+//		char* searchName: the name being searched for
+//		struct nameNode* hashTable[]: the hash table being searched
+//		int* comparisoncount[2]: array containing the count of strcmp comparisons done
+//								  in searching the sorted linked list (element 0) and 
+//								  the hash table (element 1)  
+ //		struct nameNode* linkedList: the master list being searched
+// RETURNS:
+//		None.
+void searchForNameTwice(char* searchName, struct nameNode* hashTable[], int* comparisonCount[2], struct nameNode* linkedList) {
+
+	//setting comparison counts to 0
+	comparisonCount[0] = 0;
+	comparisonCount[1] = 0;
+
+	//searching for the name in the linked list
+	nameNode* foundNode = searchLinkedList(searchName, linkedList, &comparisonCount[0]);
+
+	//printing the results
+	if (foundNode != NULL) {
+		printf("\t %s was found in the linked List in %d comparisons\n", searchName, comparisonCount[0]);
+	}
+	else {
+		printf("\t %s was NOT found in the linked List in %d comparisons\n", searchName, comparisonCount[0]);
+	}
+
+	//getting the hash bucket for the name
+	int bucket = hash(searchName);
+
+	//searching for the name in the hash table
+	foundNode = searchLinkedList(searchName, hashTable[bucket], &comparisonCount[1]);
+
+	//printing the results
+	if (foundNode != NULL) {
+		printf("\t %s was found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
+	}
+	else {
+		printf("\t %s was NOT found in the hash table bucket in %d comparisons\n", searchName, comparisonCount[1]);
+	}
+	
 }
